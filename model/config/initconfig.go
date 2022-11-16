@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/heqiaomu/webframe/utils/gviper"
+	"github.com/Heqiaomu/hqmGframe/utils/gviper"
 )
 
 var cfg App

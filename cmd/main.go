@@ -1,6 +1,6 @@
 package main
 
-import "github.com/heqiaomu/webframe/bootstrap"
+import "github.com/Heqiaomu/hqmGframe/bootstrap"
 
 func main() {
 	bootstrap.InitServer()

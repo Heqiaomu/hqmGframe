@@ -1,9 +1,9 @@
 package bootstrap
 
 import (
-	"github.com/heqiaomu/webframe/model/config"
-	"github.com/heqiaomu/webframe/utils/gos"
-	"github.com/heqiaomu/webframe/utils/gviper"
+	"github.com/Heqiaomu/hqmGframe/model/config"
+	"github.com/Heqiaomu/hqmGframe/utils/gos"
+	"github.com/Heqiaomu/hqmGframe/utils/gviper"
 	"log"
 	"path/filepath"
 )
