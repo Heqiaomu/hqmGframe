@@ -2,9 +2,9 @@ AppDebug: true   # 设置程序所处的模式，debug=true 调试模式，日�
 
 HttpServer:
   Api:
-    Port: ":20191"                 # 门户网站类端口,注意前面有冒号
+    Port: ":8080"                 # 门户网站类端口,注意前面有冒号
   Web:
-    Port: ":20201"                 # 后端应用类端口,注意前面有冒号
+    Port: ":8088"                 # 后端应用类端口,注意前面有冒号
   AllowCrossDomain: true           # 是否允许跨域，默认 允许，更多关于跨域的介绍从参考：https://www.yuque.com/xiaofensinixidaouxiang/bkfhct/kxddzd
   TrustProxies:                    # 设置gin可以信任的代理服务器(例如 nginx 前置代理服务器),详情参见文档：https://www.yuque.com/xiaofensinixidaouxiang/bkfhct/vmobe7
     IsOpen: 0                       # 可选值（0 或者 1）,如果 go 服务是被 nginx 代理，建议该值设置为 1，将 nginx 代理及机器的ip添加到 ProxyServerList 列表
@@ -13,6 +13,10 @@ HttpServer:
   IPLimit:
     Count: 15000 # 限流个数
     Time: 3600 # 限流时间
+  TLS:
+    Enabled: false
+    Key: "key"
+    Cert: ""
 
 
 Token:
@@ -37,8 +41,8 @@ Redis:
   ReConnectInterval: 1     # 从连接池获取连接失败，每次重试之间间隔的秒数
 
 Logs:
-  GinLogName: "/storage/logs/gin.log"                  # 设置 gin 框架的接口访问日志
-  GoSkeletonLogName: "/storage/logs/server.log"    # 设置GoSkeleton项目骨架运行时日志文件名，注意该名称不要与上一条重复 ,避免和 gin 框架的日志掺杂一起，造成混乱。
+  GinLogName: "/storage/logs/gin.glog"                  # 设置 gin 框架的接口访问日志
+  GoSkeletonLogName: "/storage/logs/server.glog"    # 设置GoSkeleton项目骨架运行时日志文件名，注意该名称不要与上一条重复 ,避免和 gin 框架的日志掺杂一起，造成混乱。
   TextFormat: "json"                                   # 记录日志的格式，参数选项：console、json ， console 表示一般的文本格式
   TimePrecision: "millisecond"                         # 记录日志时，相关的时间精度，该参数选项：second  、 millisecond ， 分别表示 秒 和 毫秒 ,默认为毫秒级别
   Prefix: "[github.com/Heqiaomu/goweb/server]"
@@ -117,7 +121,7 @@ FileUploadSetting:
     - "image/bmp"                     #bmp图片
     - "application/zip"               #xlsx、docx、zip
     - "application/x-gzip"            #tar.gz
-    - "text/plain; charset=utf-8"     #txt log json等文本文件
+    - "text/plain; charset=utf-8"     #txt glog json等文本文件
     - "video/mp4"      #视频文件，例如：mp4
     - "audio/mpeg"     #音频文件，例如: mp3
   OSS:
@@ -165,37 +169,34 @@ FileUploadSetting:
 
 Database: # 只针对 gorm  操作数据库有效
   UseDbType: "mysql"  # 备选项 mysql 、sqlserver、 postgresql
+  SlowThreshold: 30 # 慢SQL记录调减
   Mysql:
-    IsInitGlobalGormMysql: 1
-    SlowThreshold: 30            # 慢 SQL 阈值(sql执行时间超过此时间单位（秒），就会触发系统日志记录)
+    LogMode: "Silent"
     Write:
       Host: "127.0.0.1"
-      DataBase: "db_goskeleton"
+      DataBase: "db_qingfeng"
       Port: 3306
       Prefix: "tb_"   #  目前没有用到该配置项
       User: "root"
-      Pass: "DRsXT5ZJ6Oi55LPQ"
-      Charset: "utf8"
+      Pass: "123456"
+      Charset: "utf8mb4"
       SetMaxIdleConns: 10
       SetMaxOpenConns: 128
       SetConnMaxLifetime: 60    # 连接不活动时的最大生存时间(秒)
       ReConnectInterval: 1    # 保留项,重连数据库间隔秒数
       PingFailRetryTimes: 3   # 保留项,最大重连次数
-    IsOpenReadDb: 0                     # 是否开启读写分离配置（1=开启、0=关闭），IsOpenReadDb=1,Read 部分参数有效，否则Read部分参数直接忽略
     Read:
       Host: "127.0.0.1"
-      DataBase: "db_goskeleton"
-      Port: 3308                        #注意，非3306，请自行调整
+      DataBase: "db_qingfeng"
+      Port: 3306                        #注意，非3306，请自行调整
       Prefix: "tb_"
       User: "root"
-      Pass: "yourPassword"
-      Charset: "utf8"
+      Pass: "123456"
+      Charset: "utf8mb4"
       SetMaxIdleConns: 10
       SetMaxOpenConns: 128
       SetConnMaxLifetime: 60
   SqlServer:
-    IsInitGlobalGormSqlserver: 1
-    SlowThreshold: 30
     Write:
       Host: "127.0.0.1"
       DataBase: "db_goskeleton"
@@ -208,7 +209,6 @@ Database: # 只针对 gorm  操作数据库有效
       SetMaxIdleConns: 10
       SetMaxOpenConns: 128
       SetConnMaxLifetime: 60
-    IsOpenReadDb: 0
     Read:
       Host: "127.0.0.1"
       DataBase: "db_goskeleton"
@@ -220,8 +220,6 @@ Database: # 只针对 gorm  操作数据库有效
       SetMaxOpenConns: 128
       SetConnMaxLifetime: 60
   PostgreSql:
-    IsInitGlobalGormPostgreSql: 0
-    SlowThreshold: 30
     Write:
       Host: "127.0.0.1"
       DataBase: "db_goskeleton"
@@ -234,7 +232,6 @@ Database: # 只针对 gorm  操作数据库有效
       SetConnMaxLifetime: 60
       ReConnectInterval: 1    # 保留项,重连数据库间隔秒数
       PingFailRetryTimes: 3   # 保留项,最大重连次数
-    IsOpenReadDb: 0
     Read:
       Host: "127.0.0.1"
       DataBase: "db_goskeleton"

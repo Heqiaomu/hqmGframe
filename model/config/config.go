@@ -45,10 +45,11 @@ type FileUploadSetting struct {
 }
 
 type Database struct {
-	UseDbType  string     `json:"UseDbType" yaml:"UseDbType"`
-	Mysql      Mysql      `json:"Mysql" yaml:"Mysql"`
-	SQLServer  SQLServer  `json:"SqlServer" yaml:"SqlServer"`
-	PostgreSQL PostgreSQL `json:"PostgreSql" yaml:"PostgreSql"`
+	UseDbType     string     `json:"UseDbType" yaml:"UseDbType"`
+	SlowThreshold int        `json:"SlowThreshold" yaml:"SlowThreshold"`
+	Mysql         Mysql      `json:"Mysql" yaml:"Mysql"`
+	SQLServer     SQLServer  `json:"SqlServer" yaml:"SqlServer"`
+	PostgreSQL    PostgreSQL `json:"PostgreSql" yaml:"PostgreSql"`
 }
 
 type API struct {
@@ -71,7 +72,9 @@ type HTTPServer struct {
 	AllowCrossDomain bool         `json:"AllowCrossDomain" yaml:"AllowCrossDomain"`
 	TrustProxies     TrustProxies `json:"TrustProxies" yaml:"TrustProxies"`
 	IPLimit          IPLimit      `json:"IPLimit" yaml:"IPLimit"`
+	TLS              TLS          `json:"TLS" yaml:"TLS"`
 }
+
 type Token struct {
 	JwtTokenSignKey         string `json:"JwtTokenSignKey" yaml:"JwtTokenSignKey"`
 	JwtTokenOnlineUsers     int    `json:"JwtTokenOnlineUsers" yaml:"JwtTokenOnlineUsers"`
@@ -116,7 +119,7 @@ type Websocket struct {
 	WriteDeadline         int  `json:"WriteDeadline" yaml:"WriteDeadline"`
 }
 type SnowFlake struct {
-	SnowFlakeMachineID int `json:"SnowFlakeMachineId" yaml:"SnowFlakeMachineId"`
+	SnowFlakeMachineID int64 `json:"SnowFlakeMachineId" yaml:"SnowFlakeMachineId"`
 }
 
 type Topics struct {
@@ -198,10 +201,11 @@ type Write struct {
 	Charset            string `json:"Charset" yaml:"Charset"`
 	SetMaxIdleConns    int    `json:"SetMaxIdleConns" yaml:"SetMaxIdleConns"`
 	SetMaxOpenConns    int    `json:"SetMaxOpenConns" yaml:"SetMaxOpenConns"`
-	SetConnMaxLifetime int    `json:"SetConnMaxLifetime" yaml:"SetConnMaxLifetime"`
+	SetConnMaxLifetime int64  `json:"SetConnMaxLifetime" yaml:"SetConnMaxLifetime"`
 	ReConnectInterval  int    `json:"ReConnectInterval" yaml:"ReConnectInterval"`
 	PingFailRetryTimes int    `json:"PingFailRetryTimes" yaml:"PingFailRetryTimes"`
 }
+
 type Read struct {
 	Host               string `json:"Host" yaml:"Host"`
 	DataBase           string `json:"DataBase" yaml:"DataBase"`
@@ -212,15 +216,16 @@ type Read struct {
 	Charset            string `json:"Charset" yaml:"Charset"`
 	SetMaxIdleConns    int    `json:"SetMaxIdleConns" yaml:"SetMaxIdleConns"`
 	SetMaxOpenConns    int    `json:"SetMaxOpenConns" yaml:"SetMaxOpenConns"`
-	SetConnMaxLifetime int    `json:"SetConnMaxLifetime" yaml:"SetConnMaxLifetime"`
+	SetConnMaxLifetime int64  `json:"SetConnMaxLifetime" yaml:"SetConnMaxLifetime"`
 }
 
 type Mysql struct {
-	IsInitGlobalGormMysql int   `json:"IsInitGlobalGormMysql" yaml:"IsInitGlobalGormMysql"`
-	SlowThreshold         int   `json:"SlowThreshold" yaml:"SlowThreshold"`
-	Write                 Write `json:"Write" yaml:"Write"`
-	IsOpenReadDb          int   `json:"IsOpenReadDb" yaml:"IsOpenReadDb"`
-	Read                  Read  `json:"Read" yaml:"Read"`
+	IsInitGlobalGormMysql int    `json:"IsInitGlobalGormMysql" yaml:"IsInitGlobalGormMysql"`
+	SlowThreshold         int    `json:"SlowThreshold" yaml:"SlowThreshold"`
+	Write                 Write  `json:"Write" yaml:"Write"`
+	IsOpenReadDb          int    `json:"IsOpenReadDb" yaml:"IsOpenReadDb"`
+	Read                  Read   `json:"Read" yaml:"Read"`
+	LogMode               string `json:"LogMode" yaml:"LogMode"`
 }
 
 type SQLServer struct {
@@ -236,4 +241,10 @@ type PostgreSQL struct {
 	Write                      Write `json:"Write" yaml:"Write"`
 	IsOpenReadDb               int   `json:"IsOpenReadDb" yaml:"IsOpenReadDb"`
 	Read                       Read  `json:"Read" yaml:"Read"`
+}
+
+type TLS struct {
+	Enabled bool   `mapstructure:"Enabled" json:"Enabled" yaml:"Enabled"`
+	Cert    string `mapstructure:"Cert" json:"Cert" yaml:"Cert"`
+	Key     string `mapstructure:"Key" json:"Key" yaml:"Key"`
 }

@@ -1,7 +1,12 @@
 package main
 
-import "github.com/Heqiaomu/hqmGframe/bootstrap"
+import (
+	"github.com/Heqiaomu/hqmGframe/bootstrap"
+)
 
 func main() {
-	bootstrap.InitServer()
+	bootstrap.InitConfig()
+
+	// 开始启动服务
+	bootstrap.Start()
 }
