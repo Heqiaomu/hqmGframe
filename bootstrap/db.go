@@ -2,7 +2,7 @@ package bootstrap
 
 import (
 	"context"
-	"github.com/Heqiaomu/hqmGframe/model/entity/userdao"
+	"github.com/Heqiaomu/hqmGframe/model/entity"
 	"github.com/Heqiaomu/hqmGframe/utils/gdb"
 )
 
@@ -11,5 +11,10 @@ import (
 func InitTable() error {
 	return gdb.GormDB.GetWDB(context.Background()).
 		Set("gorm:table_options", "ENGINE=InnoDB").
-		AutoMigrate(&userdao.User{})
+		AutoMigrate(
+			&entity.User{},
+			&entity.Work{},
+			&entity.SubmitWork{},
+			&entity.Class{},
+		)
 }

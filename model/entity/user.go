@@ -1,12 +1,11 @@
-package userdao
+package entity
 
 import (
-	"github.com/Heqiaomu/hqmGframe/model/entity"
 	"time"
 )
 
 type User struct {
-	entity.Model            // 常规
+	Model                   // 常规
 	UserID        string    `json:"user_id" gorm:"user_id,index:idx_user"`   // 用户的 ID
 	Username      string    `json:"username" gorm:"username,index:idx_user"` // 登录用户名，一般为手机号
 	Password      string    `json:"password" gorm:"password"`                // 登录密码

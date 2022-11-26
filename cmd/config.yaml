@@ -2,14 +2,14 @@ AppDebug: true   # 设置程序所处的模式，debug=true 调试模式，日�
 
 HttpServer:
   Api:
-    Port: ":8080"                 # 门户网站类端口,注意前面有冒号
+    Port: ":30080"                 # 门户网站类端口,注意前面有冒号
   Web:
-    Port: ":8088"                 # 后端应用类端口,注意前面有冒号
+    Port: ":30088"                 # 后端应用类端口,注意前面有冒号
   AllowCrossDomain: true           # 是否允许跨域，默认 允许，更多关于跨域的介绍从参考：https://www.yuque.com/xiaofensinixidaouxiang/bkfhct/kxddzd
   TrustProxies:                    # 设置gin可以信任的代理服务器(例如 nginx 前置代理服务器),详情参见文档：https://www.yuque.com/xiaofensinixidaouxiang/bkfhct/vmobe7
     IsOpen: 0                       # 可选值（0 或者 1）,如果 go 服务是被 nginx 代理，建议该值设置为 1，将 nginx 代理及机器的ip添加到 ProxyServerList 列表
-    ProxyServerList:
-      - "192.168.10.1"             # nginx 代理服务器ip地址
+#    ProxyServerList:
+#      - "192.168.10.1"             # nginx 代理服务器ip地址
   IPLimit:
     Count: 15000 # 限流个数
     Time: 3600 # 限流时间
@@ -20,7 +20,7 @@ HttpServer:
 
 
 Token:
-  JwtTokenSignKey: "hqmgframe"    #设置token生成时加密的签名
+  JwtTokenSignKey: "www.heqiaomu123.cn"    #设置token生成时加密的签名
   JwtTokenOnlineUsers: 10          #一个账号密码允许最大获取几个有效的token，当超过这个值，第一次获取的token的账号、密码就会失效
   JwtTokenCreatedExpireAt: 28800   #创建时token默认有效秒数（token生成时间加上该时间秒数，算做有效期）,3600*8=28800 等于8小时
   JwtTokenRefreshAllowSec: 86400   #对于过期的token，允许在多少小时之内刷新，超过此时间则不允许刷新换取新token，86400=3600*24，即token过期24小时之内允许换新token
@@ -54,27 +54,24 @@ Logs:
   FileMaxAge: true
   Compress: false
 
-Websocket: # 该服务与Http具有相同的ip、端口，因此不需要额外设置端口
-  Enabled: false                      # 默认不启动该服务（1=启动；0=不启动）
-  WriteReadBufferSize: 20480          # 读写缓冲区分配字节，大概能存储 6800 多一点的文字
-  MaxMessageSize: 65535               # 从消息管道读取消息的最大字节
-  PingPeriod: 20                      #心跳包频率，单位：秒
-  HeartbeatFailMaxTimes: 4            # 允许心跳失败的最大次数（默认设置为PingPeriod=30秒检测一次，连续4次没有心跳就会清除后端在线信息）
-  ReadDeadline: 100                   # 客户端在线情况下，正常的业务消息间隔秒数必须小于该值，否则服务器将会主动断开，该值不能小于心跳频率*允许失败次数,单位：秒。 0 表示不设限制，即服务器不主动断开不发送任何消息的在线客户端，但会消耗服务器资源
-  WriteDeadline: 35                   # 消息单次写入超时时间，单位：秒
+Websocket:
+  Enabled: false
+  WriteReadBufferSize: 20480
+  MaxMessageSize: 65535
+  PingPeriod: 20
+  HeartbeatFailMaxTimes: 4
+  ReadDeadline: 100
+  WriteDeadline: 35
 
 SnowFlake:
-  SnowFlakeMachineId: 2               # 如果本项目同时部署在多台机器，并且需要同时使用该算法，请为每一台机器设置不同的ID，区间范围: [0,1023]
+  SnowFlakeMachineId: 2
 
 # casbin 权限控制api接口
 Casbin:
-  # Casbin打开以后注意事项：Mysql/MariDb 低版本数据库如果数据库表的引擎默认是 Myisam，
-  # 程序会报错：Specified key was too long; max key length is 1000 bytes
-  # 请手动复制 database/db_demo_mysql.sql 中创建 tb_auth_casbin_rule 的代码自行创建InnoDb引擎的表，重新启动本项目即可
-  IsInit: 0 # 是否随项目启动同步初始化：1=是；0=否, 开启 Casbin 前请确保数据库连接配置正确
-  AutoLoadPolicySeconds: 5 # 扫描数据库策略的频率(单位：秒)
-  TablePrefix: "tb" # mysql、sqlserver 前缀为 tb ；postgres 数据库前缀请设置为 web.tb，其中 web 是本项目创建的的模式
-  TableName: "auth_casbin_rule"  # 程序最终创建的表为： tb_auth_casbin_rule (即在前缀和名称之间自动添加了下划线 _ )
+  IsInit: 0
+  AutoLoadPolicySeconds: 5
+  TablePrefix: "tb"
+  TableName: "auth_casbin_rule"
   ModelConfig: |
     [request_definition]
     r = sub, obj, act
@@ -87,32 +84,17 @@ Casbin:
     [matchers]
     m = (g(r.sub, p.sub) || p.sub == "*" ) && keyMatch(r.obj , p.obj) && (r.act == p.act || p.act == "*")
 
-
-RabbitMq:
-  Enabled: false
-  Topics:
-  - Name: "PublishSubscribe"
-    Addr: "amqp://账号:密码@ip地址:5672/"   #消息服务器地址、账号、密码
-    ExchangeType: "fanout"
-    ExchangeName: "fanout_exchange"                       #即时消息队列名称，
-    DelayedExchangeName: "delayed_fanout_exchange"        #延迟消息队列名称，必须事先在rabbitmq 服务器管理端手动创建
-    Durable: false                                        #消息是否持久化，如果初始化的是延迟消息队列,那么该参数会被程序强制设置为 true
-    QueueName: ""                                         #队列名称，为空 表示所有订阅的消费者（consumer）都可以接受到同样的消息，如果设置名称，会导致只有最后一个启动的消费者能接受到消息。
-    ConsumerChanNumber: 1                                 #消费者通道数量（发布、订阅模式消费者使用一个通道，避免多个通道重复收到数据）
-    OffLineReconnectIntervalSec: 10                       #消费者掉线后,重连间隔的秒数
-    RetryCount: 5                                         #消费者掉线后,尝试重连最大次数
-
 #验证码(包括中间件)配置信息
 Captcha:
-  CaptchaId: "captcha_id"  # 验证码id提交时的键名
-  CaptchaValue: "captcha_value"   #验证码值提交时的键名
-  Length: 4   # 验证码生成时的长度
+  CaptchaId: "captcha_id"
+  CaptchaValue: "captcha_value"
+  Length: 6
 
 FileUploadSetting:
-  Size: 32                            #设置上传文件的最大值，单位：M，注意： 如果go前置nginx服务器，nginx 默认限制文件上传大小为 50 M ,用户上传文件限制还需要继续修改 nginx 配置
-  UploadFileField: "file"            #post上传文件时，表单的键名
-  UploadFileSavePath: "/storage/app/uploaded/" #上传文件保存在路径, 该路径与 BasePath 进行拼接使用
-  UploadFileReturnPath: "/public/storage/uploaded/"  # 文件上后返回的路径，由于程序会自动创建软连接，自动将资源定位到实际路径，所有资源的访问入口建议都从public开始
+  Size: 32
+  UploadFileField: "file"
+  UploadFileSavePath: "/storage/app/uploaded/"
+  UploadFileReturnPath: "/public/storage/uploaded/"
   UploadOSSTyper: Local
   AllowMimeType: #允许的文件mime类型列表
     - "image/jpeg"                    #jpg、jpeg图片格式
@@ -128,44 +110,6 @@ FileUploadSetting:
     Local:
       Path: "/public/storage/uploaded/"
       StorePath: "/storage/app/uploaded/"
-    Qinniu:
-      Zone: ZoneHuaDong
-      Bucket: ""
-      ImagePath: ""
-      Https: false
-      AccessKey: ""
-      Secretkey: ""
-      CdnDomains: false
-    AliyunOSS:
-      Endpoint: yourEndpoint
-      AccessKey: yourAccessKeyId
-      Secretkey: yourAccessKeySecret
-      Bucket: yourBucketName
-      BucketUrl: yourBucketUrl
-      BasePath: yourBasePath
-    TencentCOS:
-      Bucket: xxxxx-10005608
-      Region: ap-shanghai
-      SecretID: your-secret-id
-      SecretKey: your-secret-key
-      BaseUrl: https://gin.vue.admin
-      Prefix: ""
-    AWSS3:
-      Bucket: xxxxx-10005608
-      Region: ap-shanghai
-      Endpoint: ""
-      S3ForcePathStyle: false
-      SSL: false
-      AccessKey: your-secret-id
-      SecretKey: your-secret-key
-      BaseUrl: https://gin.vue.admin
-      Prefix: ""
-    HuaweiOBS:
-      Path: you-path
-      Bucket: you-bucket
-      Endpoint: you-endpoint
-      AccessKey: you-access-key
-      SecretKey: you-secret-key
 
 Database: # 只针对 gorm  操作数据库有效
   UseDbType: "mysql"  # 备选项 mysql 、sqlserver、 postgresql
@@ -173,72 +117,26 @@ Database: # 只针对 gorm  操作数据库有效
   Mysql:
     LogMode: "Silent"
     Write:
-      Host: "127.0.0.1"
+      Host: "192.168.31.170"
       DataBase: "db_qingfeng"
       Port: 3306
-      Prefix: "tb_"   #  目前没有用到该配置项
+      Prefix: "tb_"
       User: "root"
       Pass: "123456"
       Charset: "utf8mb4"
       SetMaxIdleConns: 10
       SetMaxOpenConns: 128
-      SetConnMaxLifetime: 60    # 连接不活动时的最大生存时间(秒)
-      ReConnectInterval: 1    # 保留项,重连数据库间隔秒数
-      PingFailRetryTimes: 3   # 保留项,最大重连次数
+      SetConnMaxLifetime: 60
+      ReConnectInterval: 1
+      PingFailRetryTimes: 3
     Read:
-      Host: "127.0.0.1"
+      Host: "192.168.31.170"
       DataBase: "db_qingfeng"
-      Port: 3306                        #注意，非3306，请自行调整
+      Port: 3306
       Prefix: "tb_"
       User: "root"
       Pass: "123456"
       Charset: "utf8mb4"
-      SetMaxIdleConns: 10
-      SetMaxOpenConns: 128
-      SetConnMaxLifetime: 60
-  SqlServer:
-    Write:
-      Host: "127.0.0.1"
-      DataBase: "db_goskeleton"
-      Port: 1433
-      Prefix: "tb_"
-      User: "Sa"
-      Pass: "secret2017"
-      ReConnectInterval: 1    # 保留项,重连数据库间隔秒数
-      PingFailRetryTimes: 3   # 保留项,最大重连次数
-      SetMaxIdleConns: 10
-      SetMaxOpenConns: 128
-      SetConnMaxLifetime: 60
-    Read:
-      Host: "127.0.0.1"
-      DataBase: "db_goskeleton"
-      Port: 1433
-      Prefix: "tb_"
-      User: "Sa"
-      Pass: "secret2017"
-      SetMaxIdleConns: 10
-      SetMaxOpenConns: 128
-      SetConnMaxLifetime: 60
-  PostgreSql:
-    Write:
-      Host: "127.0.0.1"
-      DataBase: "db_goskeleton"
-      Port: 5432
-      Prefix: "tb_"
-      User: "postgres"
-      Pass: "Secret2017~"
-      SetMaxIdleConns: 10
-      SetMaxOpenConns: 128
-      SetConnMaxLifetime: 60
-      ReConnectInterval: 1    # 保留项,重连数据库间隔秒数
-      PingFailRetryTimes: 3   # 保留项,最大重连次数
-    Read:
-      Host: "127.0.0.1"
-      DataBase: "db_goskeleton"
-      Port: 5432
-      Prefix: "tb_"
-      User: "postgres"
-      Pass: "secret2017"
       SetMaxIdleConns: 10
       SetMaxOpenConns: 128
       SetConnMaxLifetime: 60

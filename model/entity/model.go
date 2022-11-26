@@ -7,7 +7,13 @@ import (
 
 type Model struct {
 	ID        uint           `gorm:"primarykey" json:"id"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
+	CreatedAt time.Time      `gorm:"column:created_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP;<-:create" json:"created_at,omitempty"`
+	UpdatedAt time.Time      `gorm:"column:updated_at;type:TIMESTAMP;default:CURRENT_TIMESTAMP on update current_timestamp" json:"updated_at,omitempty"`
+}
+
+type Page struct {
+	Size      int
+	Offset    int
+	PageCount int
 }
