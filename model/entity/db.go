@@ -13,6 +13,9 @@ type DAO struct {
 }
 
 type Method interface {
+	/*
+		用户
+	*/
 	// GetUserByUserName 根据用户名获取用户信息
 	GetUserByUserName(phoneNum string) (*User, error)
 	// GetUserByPhone 通过手机号查询用户
@@ -23,11 +26,19 @@ type Method interface {
 	UpdateUser(model *User) (*User, error)
 	// DeleteUser 删除用户
 	DeleteUser(userID string) (*User, error)
+
+	/*
+		班级类
+	*/
+
+	CreateClass(class Class) error
+	GetClass(className string) (*Class, error)
+	GetClassList(page Page) ([]*Class, int64, error)
 }
 
 func New(ctx context.Context) *DAO {
 	return &DAO{
 		W: gdb.GormDB.GetWDB(ctx),
-		R: gdb.GormDB.GetRDB(ctx),
+		R: gdb.GormDB.GetRDB(ctx).Where("deleted_at is NULL"),
 	}
 }

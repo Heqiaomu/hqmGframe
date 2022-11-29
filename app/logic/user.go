@@ -28,6 +28,7 @@ func (l *Logic) Login(ctx context.Context, login request.Login) (interface{}, er
 		Timestamp: time.Now().Unix(),
 		Expire:    time.Minute * 30,
 	})
+
 	if err != nil {
 		return nil, gerror.ErrorAuthToken
 	}
@@ -39,4 +40,13 @@ func (l *Logic) Login(ctx context.Context, login request.Login) (interface{}, er
 		LoginTime: time.Now(),
 		ClientIP:  ctx.Value("ClientIP").(string),
 	}, nil
+}
+
+
+// Register 登录的 逻辑实现层
+func (l *Logic) Register(ctx context.Context, register request.Register) (interface{}, error) {
+	// 首先需要查询当前用户是否已经注册了
+
+
+	return nil, nil
 }

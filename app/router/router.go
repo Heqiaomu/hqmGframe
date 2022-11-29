@@ -25,6 +25,7 @@ func Routers() *gin.Engine {
 	{
 		fileUpload.InitFileApi(private)
 		userRouter.InitUserRouter(private)
+		classRouter.InitClassApi(private)
 	}
 
 	return engine
